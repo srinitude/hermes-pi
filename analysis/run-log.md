@@ -91,3 +91,82 @@ These RED tests fail naturally at commit time:
   to `srinitude/hermes-pi:main`.
 * **R07** — `test_no_loader_breakage.py` fails because the symlinked SKILL.md
   is not yet at the repo root.
+
+## GREEN phase
+
+### G02 — Copy skill content byte-for-byte
+
+```
+rsync -a ~/.hermes/skills/autonomous-ai-agents/pi/SKILL.md ./SKILL.md
+rsync -a ~/.hermes/skills/autonomous-ai-agents/pi/references/  ./references/
+rsync -a ~/.hermes/skills/autonomous-ai-agents/pi/assets/      ./assets/
+rsync -a ~/.hermes/skills/autonomous-ai-agents/pi/tests/       ./tests/
+```
+
+Manifest comparison: 29/29 files SHA-256 byte-identical to baseline.
+
+### G03 — First push
+
+```
+$ git push -u origin main
+To github.com:srinitude/hermes-pi.git
+ * [new branch]      main -> main
+
+$ gh api repos/srinitude/hermes-pi/branches/main --jq .commit.sha
+bffe6ac3eeec5b4839e79af404222c9d8551874f
+
+$ git -C ~/dev/hermes-pi rev-parse HEAD
+bffe6ac3eeec5b4839e79af404222c9d8551874f
+```
+
+Remote SHA equals local HEAD. First push is fresh (no force, no rewrite).
+
+### G05 — make link
+
+```
+$ make link
+[info] Backing up /Users/kiren/.hermes/skills/autonomous-ai-agents/pi to
+       /Users/kiren/.hermes/skills/autonomous-ai-agents/.backup/pi-20260506T185951Z
+[ok] Linked /Users/kiren/.hermes/skills/autonomous-ai-agents/pi -> /Users/kiren/dev/hermes-pi
+```
+
+Idempotency confirmed: a second `make link` reports `[ok] already symlinks to`
+without touching the backup.
+
+### G06 — GitHub Actions CI
+
+```
+$ gh run list --repo srinitude/hermes-pi --branch main --limit 1
+completed  success  green: extract pi skill content byte-for-byte from in-Hermes path
+           ci  main  push  25455085708  21s  2026-05-06T18:59:25Z
+```
+
+CI green on the initial push.
+
+## REFACTOR phase
+
+### Final validation suite
+
+```
+$ make ci
+[lint] uv run python -m compileall -q tests
+[ok] symlink + clean tree + HEAD == origin/main
+[test] uv run pytest -q ... 115 passed in 8.11s
+
+$ make verify-sync
+[ok] symlink + clean tree + HEAD == origin/main
+
+$ python3 -c "import os; p=os.path.expanduser('~/.hermes/skills/autonomous-ai-agents/pi'); \
+    assert os.path.islink(p); \
+    assert os.path.realpath(p) == os.path.realpath(os.path.expanduser('~/dev/hermes-pi'))"
+(no output → assertion pair passed)
+
+$ shasum -a 256 ~/dev/hermes-pi/SKILL.md ~/.hermes/skills/autonomous-ai-agents/pi/SKILL.md
+261bcfdb78f6e95bf837e9b09dda2966b0a4b8bf0d7ca8f50942351bcefd0c3f  ~/dev/hermes-pi/SKILL.md
+261bcfdb78f6e95bf837e9b09dda2966b0a4b8bf0d7ca8f50942351bcefd0c3f  ~/.hermes/skills/autonomous-ai-agents/pi/SKILL.md
+```
+
+### Tag and final push
+
+`git tag -a v0.1.0 -m "Initial extraction from Hermes" && git push origin v0.1.0`
+appended to the run after this section.
