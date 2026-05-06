@@ -69,7 +69,10 @@ deliberate-regression demonstrations:
   `cp -r` in `install.sh`. Re-ran the test: both assertions failed for the
   documented reason (forbidden token / missing `ln -snf`). Restored
   `install.sh`; tests passed.
-* `tests/test_ci_workflow.py` — same approach.
+* `tests/test_ci_workflow.py::test_workflow_runs_pytest` — Replaced
+  `uv run pytest -q` with a no-op probe in `.github/workflows/ci.yml`. Re-ran
+  the test: `assert "pytest" in blob or "mise run test" in blob` failed for
+  the documented reason. Restored the workflow; test passed.
 
 The regression cycle never mutates committed scaffolding; the temporary
 corruption is restored before the next git commit.
