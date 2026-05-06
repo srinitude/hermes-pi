@@ -64,7 +64,11 @@ deliberate-regression demonstrations:
   — Removed the `link:` target from `Makefile`. Re-ran the test:
   `assert 'install.sh' in text` failed for the documented reason. Restored
   `Makefile` from a one-shot backup; test passed.
-* `tests/test_install_sh_shape.py` — same approach (see entry below).
+* `tests/test_install_sh_shape.py::test_install_sh_uses_ln_snf` /
+  `::test_install_sh_rejects_cp_r_installer` — Replaced `ln -snf` with
+  `cp -r` in `install.sh`. Re-ran the test: both assertions failed for the
+  documented reason (forbidden token / missing `ln -snf`). Restored
+  `install.sh`; tests passed.
 * `tests/test_ci_workflow.py` — same approach.
 
 The regression cycle never mutates committed scaffolding; the temporary
