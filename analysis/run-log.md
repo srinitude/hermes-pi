@@ -49,3 +49,38 @@ Borrowed file shapes from `~/dev/hermes-prompt-enhancer/` (Makefile + install.sh
 patterns) and `~/dev/hermes-goal-prompt-generator/` (LICENSE, CHANGELOG.md,
 CONTRIBUTING.md, SECURITY.md, mise.toml + uv, pyproject.toml + pytest,
 .github/workflows/quality.yml).
+
+## RED phase
+
+### Deliberate-regression demonstrations
+
+The contract requires Makefile and install.sh targets to be present before any
+RED test references them (Phase 0 BOOTSTRAP step 7). Some RED tests therefore
+pass at the moment they are committed because BOOTSTRAP legitimately created
+the test-runner scaffolding. To prove the tests are not vacuous I performed
+deliberate-regression demonstrations:
+
+* `tests/test_makefile_targets.py::test_makefile_link_target_invokes_install_sh`
+  — Removed the `link:` target from `Makefile`. Re-ran the test:
+  `assert 'install.sh' in text` failed for the documented reason. Restored
+  `Makefile` from a one-shot backup; test passed.
+* `tests/test_install_sh_shape.py` — same approach (see entry below).
+* `tests/test_ci_workflow.py` — same approach.
+
+The regression cycle never mutates committed scaffolding; the temporary
+corruption is restored before the next git commit.
+
+### R01 / R02 / R05 / R06 / R07
+
+These RED tests fail naturally at commit time:
+
+* **R01** — `test_repo_layout.py` fails because `SKILL.md`, `references/`, and
+  `assets/` are not yet copied from the in-Hermes path.
+* **R02** — `test_skill_content_preserved.py` fails on every entry from the
+  baseline manifest because skill files are not present at the repo root.
+* **R05** — `test_repo_sync_invariants.py` fails because the in-Hermes path is
+  still a regular directory, not a symlink to the repo.
+* **R06** — `test_remote_published.py` fails because no commit has been pushed
+  to `srinitude/hermes-pi:main`.
+* **R07** — `test_no_loader_breakage.py` fails because the symlinked SKILL.md
+  is not yet at the repo root.
