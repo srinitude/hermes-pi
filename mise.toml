@@ -1,0 +1,19 @@
+[tools]
+python = "3.11"
+uv = "latest"
+
+[tasks.setup]
+description = "Install local development dependencies"
+run = "uv sync --extra dev"
+
+[tasks.test]
+description = "Run pytest suite"
+run = "uv run pytest -q"
+
+[tasks.lint]
+description = "Python syntax check"
+run = "uv run python -m compileall -q tests"
+
+[tasks.ci]
+description = "Run lint, verify-sync, and the test suite"
+depends = ["lint", "test"]

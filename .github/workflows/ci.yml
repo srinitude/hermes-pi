@@ -1,0 +1,27 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: astral-sh/setup-uv@v5
+      - name: Symlink in-Hermes skill path to checkout
+        run: |
+          mkdir -p "$HOME/.hermes/skills/autonomous-ai-agents"
+          ln -snf "$GITHUB_WORKSPACE" "$HOME/.hermes/skills/autonomous-ai-agents/pi"
+      - run: uv sync --extra dev
+      - run: uv run python -m compileall -q tests
+      - run: uv run pytest -q
+        env:
+          HERMES_PI_REPO: ${{ github.workspace }}
+          HERMES_PI_CI: "1"

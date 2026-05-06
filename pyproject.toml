@@ -1,0 +1,30 @@
+[project]
+name = "hermes-pi"
+version = "0.1.0"
+description = "Hermes Agent skill for delegating coding tasks to Pi (pi.dev / @mariozechner/pi-coding-agent)."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "Kiren Srinivasan" }]
+keywords = ["hermes-agent", "pi", "pi.dev", "coding-agent", "skill"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "PyYAML>=6.0"]
+
+[project.urls]
+Homepage = "https://github.com/srinitude/hermes-pi"
+Repository = "https://github.com/srinitude/hermes-pi"
+Issues = "https://github.com/srinitude/hermes-pi/issues"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
