@@ -9,7 +9,7 @@ Please open a GitHub issue for security-sensitive behavior such as:
 
 - the symlink installer clobbering files outside
   `~/.hermes/skills/autonomous-ai-agents/pi/`;
-- `make sync` performing a non-fast-forward update or rewriting history;
+- `mise run sync` performing a non-fast-forward update or rewriting history;
 - the skill loading and exposing secrets from disk.
 
 ## Secret handling

@@ -8,7 +8,6 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 REQUIRED_FILES = (
-    "Makefile",
     "install.sh",
     "mise.toml",
     "pyproject.toml",

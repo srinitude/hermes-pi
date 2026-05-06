@@ -6,14 +6,46 @@ uv = "latest"
 description = "Install local development dependencies"
 run = "uv sync --extra dev"
 
-[tasks.test]
-description = "Run pytest suite"
-run = "uv run pytest -q"
+[tasks.link]
+description = "Backup any existing in-Hermes pi dir, then symlink it to this checkout"
+run = "./install.sh"
+
+[tasks.install]
+description = "Alias for `mise run link` (idempotent symlink installer)"
+depends = ["link"]
+
+[tasks.unlink]
+description = "Remove the in-Hermes pi symlink (does not delete backup)"
+run = '''
+LINK_PATH="$HOME/.hermes/skills/autonomous-ai-agents/pi"
+if [ -L "$LINK_PATH" ]; then
+  rm "$LINK_PATH"
+  echo "Removed symlink $LINK_PATH"
+else
+  echo "No symlink at $LINK_PATH; nothing to do."
+fi
+'''
+
+[tasks.sync]
+description = "Fast-forward (--ff-only) this checkout to origin/main"
+run = [
+  "git fetch origin",
+  "git switch main",
+  "git merge --ff-only origin/main",
+]
+
+[tasks."verify-sync"]
+description = "Assert symlink + clean tree + HEAD == origin/main"
+run = "./scripts/verify-sync.sh"
 
 [tasks.lint]
 description = "Python syntax check"
 run = "uv run python -m compileall -q tests"
 
+[tasks.test]
+description = "Run pytest suite"
+run = "uv run pytest -q"
+
 [tasks.ci]
 description = "Run lint, verify-sync, and the test suite"
-depends = ["lint", "test"]
+depends = ["lint", "verify-sync", "test"]

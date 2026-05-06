@@ -6,8 +6,9 @@ Thanks for improving the Hermes `pi` skill.
 
 - All edits to skill content (`SKILL.md`, `references/`, `tests/`, `assets/`)
   flow through this repo + git, never through the in-Hermes path directly.
-- Keep `make sync` fast-forward only — never rebase, never force-push.
-- Keep `make verify-sync` green: symlink + clean tree + `HEAD == origin/main`.
+- Keep `mise run sync` fast-forward only — never rebase, never force-push.
+- Keep `mise run verify-sync` green: symlink + clean tree +
+  `HEAD == origin/main`.
 - Keep new files within the styleguide: ≤ 200 LOC per file, ≤ 30 LOC per
   function/class/test, max nesting depth 3.
 
@@ -16,11 +17,12 @@ Thanks for improving the Hermes `pi` skill.
 ```bash
 mise install
 mise run setup
-make ci
+mise run ci
 ```
 
-`make ci` runs the lint + verify-sync + test pipeline that GitHub Actions
-mirrors. The CI workflow lives at `.github/workflows/ci.yml`.
+`mise run ci` runs the lint + verify-sync + test pipeline that GitHub Actions
+mirrors. The CI workflow lives at `.github/workflows/ci.yml` and enters the
+project through `mise run ci`.
 
 ## Release checklist
 

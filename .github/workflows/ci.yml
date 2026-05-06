@@ -11,17 +11,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - uses: astral-sh/setup-uv@v5
+      - uses: jdx/mise-action@v2
       - name: Symlink in-Hermes skill path to checkout
         run: |
           mkdir -p "$HOME/.hermes/skills/autonomous-ai-agents"
           ln -snf "$GITHUB_WORKSPACE" "$HOME/.hermes/skills/autonomous-ai-agents/pi"
-      - run: uv sync --extra dev
-      - run: uv run python -m compileall -q tests
-      - run: uv run pytest -q
+      - name: mise run setup
+        run: mise run setup
+      - name: mise run ci (push to main)
+        if: github.event_name == 'push'
+        run: mise run ci
+        env:
+          HERMES_PI_REPO: ${{ github.workspace }}
+          HERMES_PI_CI: "1"
+      - name: mise run lint + mise run test (pull request)
+        if: github.event_name == 'pull_request'
+        run: |
+          mise run lint
+          mise run test
         env:
           HERMES_PI_REPO: ${{ github.workspace }}
           HERMES_PI_CI: "1"

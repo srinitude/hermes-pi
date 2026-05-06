@@ -1,7 +1,7 @@
 """R07b — assert the symlinked skill still parses with name: pi.
 
-Walks the in-Hermes path (after `make link` runs in GREEN), confirms it
-resolves to a real ``SKILL.md``, parses the YAML frontmatter, and asserts
+Walks the in-Hermes path (after ``mise run link`` runs in GREEN), confirms
+it resolves to a real ``SKILL.md``, parses the YAML frontmatter, and asserts
 ``name == 'pi'`` so the Hermes skill loader continues to discover the
 skill identically through the symlink.
 """

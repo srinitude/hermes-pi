@@ -8,4 +8,5 @@ __pycache__/
 dist/
 build/
 *.egg-info/
+.claude/
 analysis/post-copy-manifest.sha256
